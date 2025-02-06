@@ -38,10 +38,10 @@ public class JobServiceImpl implements JobService {
     @Override
     public ResponseEntity<List<JobDTO>> findAll() {
         List<Jobs> jobs = jobRepository.findAll();
-        List<JobDTO> jobDTOS = jobs.stream().map(this::convertToDTO).toList();
+        List<JobDTO> jobDTOs = jobs.stream().map(this::convertToDTO).toList();
 
         return new ResponseEntity<>(
-                jobDTOS
+                jobDTOs
                 , HttpStatus.OK);
     }
 

@@ -21,6 +21,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ResponseEntity<List<Reviews>> getall(Long companyId) {
+        List<Reviews> reviews = reviewRepository.findByCompanyId(companyId);
+        if (reviews.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No company found");
+        }
         return new ResponseEntity<>(reviewRepository.findByCompanyId(companyId), HttpStatus.OK);
     }
 
@@ -31,8 +35,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseEntity<Reviews> getone(Long id) {
-        Reviews review = reviewRepository.findById(id).orElseThrow(
+    public ResponseEntity<Reviews> getone(Long reviewId) {
+        Reviews review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
         );
         return new ResponseEntity<>(review, HttpStatus.OK);
@@ -49,8 +53,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseEntity<String> deleteone(Long id) {
-        Reviews oldreview = reviewRepository.findById(id).orElseThrow(
+    public ResponseEntity<String> deleteone(Long reviewId) {
+        Reviews oldreview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
         );
         reviewRepository.delete(oldreview);

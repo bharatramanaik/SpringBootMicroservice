@@ -55,11 +55,13 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public ResponseEntity<String> deleteCompanyById(Long id) {
-        Company company = companyRepository.findById(id).orElseThrow(
+    public ResponseEntity<String> deleteCompanyById(Long companyId) {
+        Company company = companyRepository.findById(companyId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
         );
+
         companyRepository.delete(company);
+        deleteJobsAndReviews(companyId);
         return new ResponseEntity<>("deleted", HttpStatus.OK);
     }
 
@@ -94,4 +96,19 @@ public class CompanyServiceImpl implements CompanyService {
 
         return CompanyMapper.mapToCompanyDTO(company, jobsList, reviewList);
     }
+
+
+    private void deleteJobsAndReviews(Long companyId){
+        List<Jobs> jobsList = jobClient.getJobs(companyId);
+        List<Review> reviewList = reviewClient.getReview(companyId);
+        for (Jobs job: jobsList) {
+            jobClient.deleteJobs(job.getId());
+        }
+
+        for (Review review: reviewList){
+            reviewClient.deleteReviews(review.getId());
+        }
+
+    }
+
 }
