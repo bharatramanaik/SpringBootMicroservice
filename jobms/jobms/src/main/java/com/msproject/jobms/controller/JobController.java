@@ -1,5 +1,6 @@
 package com.msproject.jobms.controller;
 
+import com.msproject.jobms.dto.JobDTO;
 import com.msproject.jobms.model.Jobs;
 import com.msproject.jobms.service.JobService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,13 @@ public class JobController {
     }
 
     @GetMapping("/getalljobs")
-    public ResponseEntity<List<Jobs>> findAlljobs(){
+    public ResponseEntity<List<JobDTO>> findAlljobs(){
         return jobService.findAll();
+    }
+
+    @GetMapping("/getjobsofonecompany")
+    public ResponseEntity<List<Jobs>> findJobsofOneCompany(@RequestParam Long companyId){
+        return jobService.findJobsOfOneCompany(companyId);
     }
 
     @PostMapping("/createjob")
@@ -28,7 +34,7 @@ public class JobController {
     }
 
     @GetMapping("/getonejob/{jobid}")
-    public ResponseEntity<Jobs> getJobById(@PathVariable Long jobid){
+    public ResponseEntity<JobDTO> getJobById(@PathVariable Long jobid){
         return jobService.getJobById(jobid);
     }
 

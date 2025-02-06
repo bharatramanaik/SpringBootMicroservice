@@ -1,5 +1,6 @@
 package com.msproject.companyms.controller;
 
+import com.msproject.companyms.dto.CompanyDTO;
 import com.msproject.companyms.model.Company;
 import com.msproject.companyms.service.CompanyService;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CompanyController {
     }
 
     @GetMapping("/getallcompanies")
-    public ResponseEntity<List<Company>> getallcompanies(){
+    public ResponseEntity<List<CompanyDTO>> getallcompanies(){
         return companyService.findAll();
     }
 
@@ -28,7 +29,7 @@ public class CompanyController {
     }
 
     @GetMapping("/getonecompany/{id}")
-    public ResponseEntity<Company> getcompanybyid(@PathVariable Long id){
+    public ResponseEntity<CompanyDTO> getcompanybyid(@PathVariable Long id){
         return companyService.getCompanyById(id);
     }
 

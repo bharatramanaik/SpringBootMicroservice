@@ -20,8 +20,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseEntity<List<Reviews>> getall() {
-        return new ResponseEntity<>(reviewRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<Reviews>> getall(Long companyId) {
+        return new ResponseEntity<>(reviewRepository.findByCompanyId(companyId), HttpStatus.OK);
     }
 
     @Override

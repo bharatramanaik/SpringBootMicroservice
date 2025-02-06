@@ -18,8 +18,8 @@ public class ReviewController {
     }
 
     @GetMapping("/getallreviews")
-    public ResponseEntity<List<Reviews>> getall(){
-        return reviewService.getall();
+    public ResponseEntity<List<Reviews>> getall(@RequestParam Long companyId){
+        return reviewService.getall(companyId);
     }
 
     @PostMapping("/createreview")
@@ -27,9 +27,9 @@ public class ReviewController {
         return reviewService.create(review);
     }
 
-    @GetMapping("/getonereview/{id}")
-    public ResponseEntity<Reviews> getonereview(@PathVariable Long id){
-        return reviewService.getone(id);
+    @GetMapping("/getonereview/{reviewid}")
+    public ResponseEntity<Reviews> getonereview(@PathVariable Long reviewid){
+        return reviewService.getone(reviewid);
     }
 
     @PutMapping("/updatereview")
@@ -37,8 +37,8 @@ public class ReviewController {
         return reviewService.updateone(review);
     }
 
-    @DeleteMapping("/deleteonereview/{id}")
-    public ResponseEntity<String> deleteonereview(@PathVariable Long id){
-        return reviewService.deleteone(id);
+    @DeleteMapping("/deleteonereview/{reviewid}")
+    public ResponseEntity<String> deleteonereview(@PathVariable Long reviewid){
+        return reviewService.deleteone(reviewid);
     }
 }
