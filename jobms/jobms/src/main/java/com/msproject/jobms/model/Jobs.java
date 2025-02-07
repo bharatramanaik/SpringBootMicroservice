@@ -22,7 +22,4 @@ public class Jobs {
     private String location;
     private Long companyId;
 
-
-
-
 }

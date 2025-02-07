@@ -48,9 +48,6 @@ public class JobServiceImpl implements JobService {
     @Override
     public ResponseEntity<List<Jobs>> findJobsOfOneCompany(Long companyId) {
         List<Jobs> jobs = jobRepository.findByCompanyId(companyId);
-        if (jobs.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not found");
-        }
         return new ResponseEntity<>(jobRepository.findByCompanyId(companyId), HttpStatus.OK);
     }
 

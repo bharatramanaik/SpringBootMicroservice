@@ -22,9 +22,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ResponseEntity<List<Reviews>> getall(Long companyId) {
         List<Reviews> reviews = reviewRepository.findByCompanyId(companyId);
-        if (reviews.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No company found");
-        }
         return new ResponseEntity<>(reviewRepository.findByCompanyId(companyId), HttpStatus.OK);
     }
 
