@@ -54,6 +54,10 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public ResponseEntity<String> createJob(Jobs jobs) {
+        Company company = companyClient.getCompany(jobs.getCompanyId());
+        if (company == null){
+            return new ResponseEntity<>("Company not exists", HttpStatus.NOT_FOUND);
+        }
         jobRepository.save(jobs);
         return new ResponseEntity<>("Created", HttpStatus.CREATED);
     }

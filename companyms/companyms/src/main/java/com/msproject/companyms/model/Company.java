@@ -22,6 +22,6 @@ public class Company {
     private Long companyId;
     private String name;
     private String description;
-
+    private Double rating;
 
 }

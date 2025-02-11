@@ -18,6 +18,7 @@ public class CompanyDTO {
     private Long companyId;
     private String name;
     private String description;
+    private Double rating;
     private List<Review> reviews;
     private List<Jobs> jobs;
 }

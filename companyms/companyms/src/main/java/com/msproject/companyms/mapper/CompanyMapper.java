@@ -14,6 +14,7 @@ public class CompanyMapper {
         companyDTO.setCompanyId(company.getCompanyId());
         companyDTO.setName(company.getName());
         companyDTO.setDescription(company.getDescription());
+        companyDTO.setRating(company.getRating());
         companyDTO.setReviews(review);
         companyDTO.setJobs(jobs);
         return companyDTO;

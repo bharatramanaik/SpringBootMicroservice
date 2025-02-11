@@ -1,8 +1,11 @@
 package com.msproject.reviewms.service.imple;
 
+import com.msproject.reviewms.clients.CompanyClient;
+import com.msproject.reviewms.external.Company;
 import com.msproject.reviewms.model.Reviews;
 import com.msproject.reviewms.repository.ReviewRepository;
 import com.msproject.reviewms.service.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,9 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private CompanyClient companyClient;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
@@ -27,6 +33,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ResponseEntity<String> create(Reviews review) {
+        Company company = companyClient.getCompany(review.getCompanyId());
+        if (company == null){
+            return new ResponseEntity<>("Company not exists", HttpStatus.NOT_FOUND);
+        }
         reviewRepository.save(review);
         return new ResponseEntity<>("created", HttpStatus.CREATED);
     }

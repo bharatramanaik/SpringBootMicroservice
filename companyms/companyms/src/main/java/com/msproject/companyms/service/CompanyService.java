@@ -1,6 +1,7 @@
 package com.msproject.companyms.service;
 
 import com.msproject.companyms.dto.CompanyDTO;
+import com.msproject.companyms.dto.ReviewMessage;
 import com.msproject.companyms.model.Company;
 import org.springframework.http.ResponseEntity;
 
@@ -12,4 +13,5 @@ public interface CompanyService {
     ResponseEntity<CompanyDTO> getCompanyById(Long id);
     ResponseEntity<String> deleteCompanyById(Long id);
     ResponseEntity<String> updateCompany(Company company);
+    void updateCompanyRating(ReviewMessage reviewMessage);
 }

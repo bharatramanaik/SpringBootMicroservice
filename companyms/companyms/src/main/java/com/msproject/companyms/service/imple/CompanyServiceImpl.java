@@ -3,6 +3,7 @@ package com.msproject.companyms.service.imple;
 import com.msproject.companyms.clients.JobClient;
 import com.msproject.companyms.clients.ReviewClient;
 import com.msproject.companyms.dto.CompanyDTO;
+import com.msproject.companyms.dto.ReviewMessage;
 import com.msproject.companyms.external.Jobs;
 import com.msproject.companyms.external.Review;
 import com.msproject.companyms.mapper.CompanyMapper;
@@ -73,6 +74,18 @@ public class CompanyServiceImpl implements CompanyService {
         );
         companyRepository.save(company);
         return new ResponseEntity<>("updated", HttpStatus.OK);
+    }
+
+    @Override
+    public void updateCompanyRating(ReviewMessage reviewMessage) {
+        Company oldcompany = companyRepository.findById(reviewMessage.getCompanyId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+        );
+        Double avgRating = reviewClient.getAverageRating(reviewMessage.getCompanyId());
+        oldcompany.setRating(avgRating);
+        System.out.println(avgRating);
+        companyRepository.save(oldcompany);
+
     }
 
     private CompanyDTO convertToDTO(Company company){
