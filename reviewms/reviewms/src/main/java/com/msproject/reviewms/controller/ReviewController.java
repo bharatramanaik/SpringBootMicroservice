@@ -1,5 +1,6 @@
 package com.msproject.reviewms.controller;
 
+import com.msproject.reviewms.dto.MessageResponse;
 import com.msproject.reviewms.messaging.ReviewMessageProducer;
 import com.msproject.reviewms.model.Reviews;
 import com.msproject.reviewms.service.ReviewService;
@@ -26,7 +27,7 @@ public class ReviewController {
     }
 
     @PostMapping("/createreview")
-    public ResponseEntity<String> createreview(@RequestBody Reviews review){
+    public ResponseEntity<MessageResponse> createreview(@RequestBody Reviews review){
         reviewMessageProducer.sendMessage(review);
         return reviewService.create(review);
     }
@@ -43,12 +44,12 @@ public class ReviewController {
     }
 
     @PutMapping("/updatereview")
-    public ResponseEntity<String> updatereview(@RequestBody Reviews review){
+    public ResponseEntity<MessageResponse> updatereview(@RequestBody Reviews review){
         return reviewService.updateone(review);
     }
 
     @DeleteMapping("/deleteonereview/{reviewid}")
-    public ResponseEntity<String> deleteonereview(@PathVariable Long reviewid){
+    public ResponseEntity<MessageResponse> deleteonereview(@PathVariable Long reviewid){
         return reviewService.deleteone(reviewid);
     }
 }

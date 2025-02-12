@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CompanyResponse {
     private String message;
     private CompanyDTO data;
+    private int status;
 }

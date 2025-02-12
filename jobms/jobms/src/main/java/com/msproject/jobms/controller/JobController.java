@@ -1,6 +1,7 @@
 package com.msproject.jobms.controller;
 
 import com.msproject.jobms.dto.JobDTO;
+import com.msproject.jobms.dto.MessageResponse;
 import com.msproject.jobms.model.Jobs;
 import com.msproject.jobms.service.JobService;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class JobController {
     }
 
     @PostMapping("/createjob")
-    public ResponseEntity<String> createJob(@RequestBody Jobs job){
+    public ResponseEntity<MessageResponse> createJob(@RequestBody Jobs job){
         return jobService.createJob(job);
     }
 
@@ -39,12 +40,12 @@ public class JobController {
     }
 
     @PutMapping("/updatejob")
-    public ResponseEntity<String> updateJob(@RequestBody Jobs job){
+    public ResponseEntity<MessageResponse> updateJob(@RequestBody Jobs job){
         return jobService.updateJob(job);
     }
 
     @DeleteMapping("/deleteonejob/{jobid}")
-    public ResponseEntity<String> deleteJob(@PathVariable Long jobid){
+    public ResponseEntity<MessageResponse> deleteJob(@PathVariable Long jobid){
         return jobService.deleteJobById(jobid);
     }
 

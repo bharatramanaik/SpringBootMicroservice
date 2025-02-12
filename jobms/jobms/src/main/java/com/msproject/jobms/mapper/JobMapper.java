@@ -1,6 +1,7 @@
 package com.msproject.jobms.mapper;
 
 import com.msproject.jobms.dto.JobDTO;
+import com.msproject.jobms.dto.MessageResponse;
 import com.msproject.jobms.external.Company;
 import com.msproject.jobms.external.Review;
 import com.msproject.jobms.model.Jobs;
@@ -20,5 +21,12 @@ public class JobMapper {
         jobDTO.setReview(review);
 
         return jobDTO;
+    }
+
+    public static MessageResponse mapToMessageResponse(String message, int status){
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessage(message);
+        messageResponse.setStatus(status);
+        return messageResponse;
     }
 }

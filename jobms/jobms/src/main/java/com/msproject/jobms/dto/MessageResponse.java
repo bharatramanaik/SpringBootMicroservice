@@ -1,4 +1,4 @@
-package com.msproject.companyms.dto;
+package com.msproject.jobms.dto;
 
 import lombok.Getter;
 import lombok.Setter;

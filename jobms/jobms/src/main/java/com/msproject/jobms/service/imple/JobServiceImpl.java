@@ -3,6 +3,7 @@ package com.msproject.jobms.service.imple;
 import com.msproject.jobms.clients.CompanyClient;
 import com.msproject.jobms.clients.ReviewClient;
 import com.msproject.jobms.dto.JobDTO;
+import com.msproject.jobms.dto.MessageResponse;
 import com.msproject.jobms.external.Company;
 import com.msproject.jobms.external.Review;
 import com.msproject.jobms.mapper.JobMapper;
@@ -39,10 +40,7 @@ public class JobServiceImpl implements JobService {
     public ResponseEntity<List<JobDTO>> findAll() {
         List<Jobs> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOs = jobs.stream().map(this::convertToDTO).toList();
-
-        return new ResponseEntity<>(
-                jobDTOs
-                , HttpStatus.OK);
+        return new ResponseEntity<>(jobDTOs, HttpStatus.OK);
     }
 
     @Override
@@ -53,13 +51,18 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    public ResponseEntity<String> createJob(Jobs jobs) {
+    public ResponseEntity<MessageResponse> createJob(Jobs jobs) {
         Company company = companyClient.getCompany(jobs.getCompanyId());
         if (company == null){
-            return new ResponseEntity<>("Company not exists", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(
+                    JobMapper.mapToMessageResponse("Company not exists", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
         }
         jobRepository.save(jobs);
-        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                JobMapper.mapToMessageResponse("Job created", HttpStatus.CREATED.value()),
+                HttpStatus.CREATED);
+
     }
 
     @Override
@@ -71,21 +74,37 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public ResponseEntity<String> deleteJobById(Long id) {
-        Jobs oldjob = jobRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
-        );
-        jobRepository.deleteById(id);
-        return new ResponseEntity<>("deleted", HttpStatus.OK);
+    public ResponseEntity<MessageResponse> deleteJobById(Long id) {
+        try {
+            Jobs oldjob = jobRepository.findById(id).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+            );
+            jobRepository.deleteById(id);
+            return new ResponseEntity<>(
+                    JobMapper.mapToMessageResponse("Job deleted", HttpStatus.OK.value()),
+                    HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    JobMapper.mapToMessageResponse("Job not exists", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
-    public ResponseEntity<String> updateJob(Jobs jobs) {
-        Long jobid = jobs.getId();
-        Jobs oldjob = jobRepository.findById(jobid).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
-        jobRepository.save(jobs);
-        return new ResponseEntity<>("updated", HttpStatus.OK);
+    public ResponseEntity<MessageResponse> updateJob(Jobs jobs) {
+        try {
+            Long jobid = jobs.getId();
+            Jobs oldjob = jobRepository.findById(jobid).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
+            jobRepository.save(jobs);
+            return new ResponseEntity<>(
+                    JobMapper.mapToMessageResponse("Job updated", HttpStatus.OK.value()),
+                    HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    JobMapper.mapToMessageResponse("Job not exists", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
     private JobDTO convertToDTO(Jobs job){

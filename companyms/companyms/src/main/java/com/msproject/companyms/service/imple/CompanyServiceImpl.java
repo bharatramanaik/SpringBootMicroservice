@@ -4,6 +4,7 @@ import com.msproject.companyms.clients.JobClient;
 import com.msproject.companyms.clients.ReviewClient;
 import com.msproject.companyms.dto.CompanyDTO;
 import com.msproject.companyms.dto.CompanyResponse;
+import com.msproject.companyms.dto.MessageResponse;
 import com.msproject.companyms.dto.ReviewMessage;
 import com.msproject.companyms.external.Jobs;
 import com.msproject.companyms.external.Review;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,48 +39,64 @@ public class CompanyServiceImpl implements CompanyService {
     public ResponseEntity<List<CompanyDTO>> findAll() {
         List<Company> companies = companyRepository.findAll();
         List<CompanyDTO> companyDTOs = companies.stream().map(this::convertToDTO).toList();
-        return new ResponseEntity<>(companyDTOs,HttpStatus.OK);
+        return new ResponseEntity<>(companyDTOs, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<String> createCompany(Company company) {
+    public ResponseEntity<MessageResponse> createCompany(Company company) {
         companyRepository.save(company);
-        return new ResponseEntity<>("created", HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                CompanyMapper.mapToMessageResponse("Company created", HttpStatus.CREATED.value())
+                , HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<CompanyResponse> getCompanyById(Long id) {
+    public ResponseEntity<CompanyDTO> getCompanyById(Long id) {
+
+        Company company = companyRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
+        CompanyDTO companyDTO = convertToDTO(company);
+        CompanyResponse companyResponse = CompanyMapper.mapToCompanyResponse(companyDTO, "Company " + id, HttpStatus.OK.value());
+        return new ResponseEntity<>(companyDTO, HttpStatus.OK);
+
+
+    }
+
+    @Override
+    public ResponseEntity<MessageResponse> deleteCompanyById(Long companyId) {
         try {
-            Company company = companyRepository.findById(id).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
-            CompanyDTO companyDTO = convertToDTO(company);
-            CompanyResponse companyResponse = CompanyMapper.mapToCompanyResponse(companyDTO, "Company "+id);
-            return new ResponseEntity<>(companyResponse, HttpStatus.OK);
-        }catch (ResponseStatusException e){
-            CompanyResponse companyResponse = CompanyMapper.mapToCompanyResponse(null, "Company "+id);
-            return new ResponseEntity<>(companyResponse, HttpStatus.NOT_FOUND);
+            Company company = companyRepository.findById(companyId).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+            );
+            companyRepository.delete(company);
+            deleteJobsAndReviews(companyId);
+
+            return new ResponseEntity<>(
+                    CompanyMapper.mapToMessageResponse("Company deleted", HttpStatus.OK.value())
+                    , HttpStatus.OK);
+        } catch (ResponseStatusException e){
+            return new ResponseEntity<>(
+                    CompanyMapper.mapToMessageResponse("Company not exists", HttpStatus.NOT_FOUND.value())
+                    , HttpStatus.NOT_FOUND);
         }
-
     }
 
     @Override
-    public ResponseEntity<String> deleteCompanyById(Long companyId) {
-        Company company = companyRepository.findById(companyId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
-        );
-        companyRepository.delete(company);
-        deleteJobsAndReviews(companyId);
-        return new ResponseEntity<>("deleted", HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<String> updateCompany(Company company) {
-        Long compid = company.getCompanyId();
-        Company oldcompany = companyRepository.findById(compid).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
-        );
-        companyRepository.save(company);
-        return new ResponseEntity<>("updated", HttpStatus.OK);
+    public ResponseEntity<MessageResponse> updateCompany(Company company) {
+        try {
+            Long companyId = company.getCompanyId();
+            Company oldcompany = companyRepository.findById(companyId).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+            );
+            companyRepository.save(company);
+            return new ResponseEntity<>(
+                    CompanyMapper.mapToMessageResponse("Company updated", HttpStatus.OK.value())
+                    , HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    CompanyMapper.mapToMessageResponse("Company not exists", HttpStatus.OK.value())
+                    , HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override

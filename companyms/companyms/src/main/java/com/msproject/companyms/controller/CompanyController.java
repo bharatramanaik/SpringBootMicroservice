@@ -2,6 +2,7 @@ package com.msproject.companyms.controller;
 
 import com.msproject.companyms.dto.CompanyDTO;
 import com.msproject.companyms.dto.CompanyResponse;
+import com.msproject.companyms.dto.MessageResponse;
 import com.msproject.companyms.model.Company;
 import com.msproject.companyms.service.CompanyService;
 import org.springframework.http.ResponseEntity;
@@ -25,22 +26,22 @@ public class CompanyController {
     }
 
     @PostMapping("/createcompany")
-    public ResponseEntity<String> createjob(@RequestBody Company company){
+    public ResponseEntity<MessageResponse> createjob(@RequestBody Company company){
         return companyService.createCompany(company);
     }
 
     @GetMapping("/getonecompany/{id}")
-    public ResponseEntity<CompanyResponse> getcompanybyid(@PathVariable Long id){
+    public ResponseEntity<CompanyDTO> getcompanybyid(@PathVariable Long id){
         return companyService.getCompanyById(id);
     }
 
     @PutMapping("/updatecompany")
-    public ResponseEntity<String> updatecompany(@RequestBody Company company){
+    public ResponseEntity<MessageResponse> updatecompany(@RequestBody Company company){
         return companyService.updateCompany(company);
     }
 
     @DeleteMapping("/deletecompany/{id}")
-    public ResponseEntity<String> deletecompany(@PathVariable Long id){
+    public ResponseEntity<MessageResponse> deletecompany(@PathVariable Long id){
         return companyService.deleteCompanyById(id);
     }
 
