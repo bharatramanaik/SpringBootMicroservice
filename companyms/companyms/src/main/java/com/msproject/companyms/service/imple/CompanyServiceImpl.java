@@ -3,6 +3,7 @@ package com.msproject.companyms.service.imple;
 import com.msproject.companyms.clients.JobClient;
 import com.msproject.companyms.clients.ReviewClient;
 import com.msproject.companyms.dto.CompanyDTO;
+import com.msproject.companyms.dto.CompanyResponse;
 import com.msproject.companyms.dto.ReviewMessage;
 import com.msproject.companyms.external.Jobs;
 import com.msproject.companyms.external.Review;
@@ -48,11 +49,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public ResponseEntity<CompanyDTO> getCompanyById(Long id) {
-        Company company = companyRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
-        CompanyDTO companyDTO = convertToDTO(company);
-        return new ResponseEntity<>(companyDTO, HttpStatus.OK);
+    public ResponseEntity<CompanyResponse> getCompanyById(Long id) {
+        try {
+            Company company = companyRepository.findById(id).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found"));
+            CompanyDTO companyDTO = convertToDTO(company);
+            CompanyResponse companyResponse = CompanyMapper.mapToCompanyResponse(companyDTO, "Company "+id);
+            return new ResponseEntity<>(companyResponse, HttpStatus.OK);
+        }catch (ResponseStatusException e){
+            CompanyResponse companyResponse = CompanyMapper.mapToCompanyResponse(null, "Company "+id);
+            return new ResponseEntity<>(companyResponse, HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @Override
@@ -60,7 +68,6 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(companyId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
         );
-
         companyRepository.delete(company);
         deleteJobsAndReviews(companyId);
         return new ResponseEntity<>("deleted", HttpStatus.OK);
@@ -82,8 +89,11 @@ public class CompanyServiceImpl implements CompanyService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
         );
         Double avgRating = reviewClient.getAverageRating(reviewMessage.getCompanyId());
-        oldcompany.setRating(avgRating);
-        System.out.println(avgRating);
+        if (avgRating == 0){
+            oldcompany.setRating(reviewMessage.getRating());
+        }else {
+            oldcompany.setRating(avgRating);
+        }
         companyRepository.save(oldcompany);
 
     }

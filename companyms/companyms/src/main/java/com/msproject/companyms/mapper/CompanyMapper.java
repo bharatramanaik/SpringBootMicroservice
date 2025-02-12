@@ -1,6 +1,7 @@
 package com.msproject.companyms.mapper;
 
 import com.msproject.companyms.dto.CompanyDTO;
+import com.msproject.companyms.dto.CompanyResponse;
 import com.msproject.companyms.external.Jobs;
 import com.msproject.companyms.external.Review;
 import com.msproject.companyms.model.Company;
@@ -18,5 +19,12 @@ public class CompanyMapper {
         companyDTO.setReviews(review);
         companyDTO.setJobs(jobs);
         return companyDTO;
+    }
+
+    public static CompanyResponse mapToCompanyResponse(CompanyDTO data, String message){
+        CompanyResponse companyResponse = new CompanyResponse();
+        companyResponse.setData(data);
+        companyResponse.setMessage(message);
+        return companyResponse;
     }
 }
